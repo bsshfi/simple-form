@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>نموذج بسيط</title>
+</head>
+<body>
+<h2>أدخل بياناتك</h2>
+<form id="userForm">
+  الاسم: <input type="text" id="name"><br>
+  العمر: <input type="number" id="age"><br>
+  الجنس: 
+  <select id="gender">
+    <option value="ذكر">ذكر</option>
+    <option value="أنثى">أنثى</option>
+  </select><br><br>
+  <button type="submit">حفظ</button>
+</form>
+
+<script>
+const token = 'YOUR_GITHUB_TOKEN';
+const owner = 'YOUR_USERNAME';
+const repo = 'simple-form';
+const path = 'data.json';
+
+document.getElementById('userForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const age = document.getElementById('age').value;
+  const gender = document.getElementById('gender').value;
+
+  const content = JSON.stringify([{name, age, gender}], null, 2);
+  const encodedContent = btoa(content);
+
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github+json'
+    },
+    body: JSON.stringify({
+      message: "حفظ بيانات جديدة",
+      content: encodedContent
+    })
+  });
+
+  if (res.ok) alert('تم الحفظ!');
+  else alert('فشل الحفظ');
+});
+</script>
+</body>
+</html>
